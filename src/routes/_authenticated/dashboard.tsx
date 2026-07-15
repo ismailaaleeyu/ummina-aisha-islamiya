@@ -49,15 +49,16 @@ function Dashboard() {
   ];
 
   const modules = [
-    { icon: Users, name: "Students" },
-    { icon: GraduationCap, name: "Teachers" },
-    { icon: CalendarDays, name: "Attendance" },
-    { icon: BookOpen, name: "Exams" },
-    { icon: Wallet, name: "Finance" },
-    { icon: Library, name: "Library" },
-    { icon: Bus, name: "Transport" },
-    { icon: MessagesSquare, name: "Communication" },
-    { icon: BarChart3, name: "Reports" },
+    { icon: Users, name: "Students", to: "/students" as const, ready: true },
+    { icon: BookOpen, name: "Classes", to: "/classes" as const, ready: true },
+    { icon: GraduationCap, name: "Teachers", to: null, ready: false },
+    { icon: CalendarDays, name: "Attendance", to: null, ready: false },
+    { icon: BookOpen, name: "Exams", to: null, ready: false },
+    { icon: Wallet, name: "Finance", to: null, ready: false },
+    { icon: Library, name: "Library", to: null, ready: false },
+    { icon: Bus, name: "Transport", to: null, ready: false },
+    { icon: MessagesSquare, name: "Communication", to: null, ready: false },
+    { icon: BarChart3, name: "Reports", to: null, ready: false },
   ];
 
   return (
@@ -122,20 +123,25 @@ function Dashboard() {
             </button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {modules.map((m) => (
-              <button
-                key={m.name}
-                className="group flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-sm"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground transition">
-                  <m.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{m.name}</p>
-                  <p className="text-xs text-muted-foreground">Coming soon</p>
-                </div>
-              </button>
-            ))}
+            {modules.map((m) => {
+              const inner = (
+                <>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground transition">
+                    <m.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">{m.ready ? "Open" : "Coming soon"}</p>
+                  </div>
+                </>
+              );
+              const cls = "group flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-sm";
+              return m.to ? (
+                <Link key={m.name} to={m.to} className={cls}>{inner}</Link>
+              ) : (
+                <button key={m.name} className={cls + " opacity-70 cursor-not-allowed"}>{inner}</button>
+              );
+            })}
           </div>
         </section>
 
