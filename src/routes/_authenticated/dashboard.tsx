@@ -123,20 +123,25 @@ function Dashboard() {
             </button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {modules.map((m) => (
-              <button
-                key={m.name}
-                className="group flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-sm"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground transition">
-                  <m.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{m.name}</p>
-                  <p className="text-xs text-muted-foreground">Coming soon</p>
-                </div>
-              </button>
-            ))}
+            {modules.map((m) => {
+              const inner = (
+                <>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground transition">
+                    <m.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">{m.ready ? "Open" : "Coming soon"}</p>
+                  </div>
+                </>
+              );
+              const cls = "group flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-sm";
+              return m.to ? (
+                <Link key={m.name} to={m.to} className={cls}>{inner}</Link>
+              ) : (
+                <button key={m.name} className={cls + " opacity-70 cursor-not-allowed"}>{inner}</button>
+              );
+            })}
           </div>
         </section>
 
