@@ -49,15 +49,16 @@ function Dashboard() {
   ];
 
   const modules = [
-    { icon: Users, name: "Students" },
-    { icon: GraduationCap, name: "Teachers" },
-    { icon: CalendarDays, name: "Attendance" },
-    { icon: BookOpen, name: "Exams" },
-    { icon: Wallet, name: "Finance" },
-    { icon: Library, name: "Library" },
-    { icon: Bus, name: "Transport" },
-    { icon: MessagesSquare, name: "Communication" },
-    { icon: BarChart3, name: "Reports" },
+    { icon: Users, name: "Students", to: "/students" as const, ready: true },
+    { icon: BookOpen, name: "Classes", to: "/classes" as const, ready: true },
+    { icon: GraduationCap, name: "Teachers", to: null, ready: false },
+    { icon: CalendarDays, name: "Attendance", to: null, ready: false },
+    { icon: BookOpen, name: "Exams", to: null, ready: false },
+    { icon: Wallet, name: "Finance", to: null, ready: false },
+    { icon: Library, name: "Library", to: null, ready: false },
+    { icon: Bus, name: "Transport", to: null, ready: false },
+    { icon: MessagesSquare, name: "Communication", to: null, ready: false },
+    { icon: BarChart3, name: "Reports", to: null, ready: false },
   ];
 
   return (
