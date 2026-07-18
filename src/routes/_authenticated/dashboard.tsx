@@ -52,7 +52,7 @@ function Dashboard() {
     { icon: Users, name: "Students", to: "/students" as const, ready: true },
     { icon: BookOpen, name: "Classes", to: "/classes" as const, ready: true },
     { icon: GraduationCap, name: "Teachers", to: "/teachers" as const, ready: true },
-    { icon: CalendarDays, name: "Attendance", to: null, ready: false },
+    { icon: CalendarDays, name: "Attendance", to: "/attendance" as const, ready: true },
     { icon: BookOpen, name: "Exams", to: null, ready: false },
     { icon: Wallet, name: "Finance", to: null, ready: false },
     { icon: Library, name: "Library", to: null, ready: false },
