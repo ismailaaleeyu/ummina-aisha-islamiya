@@ -88,10 +88,10 @@ function FinancePage() {
         <div className="flex gap-2 border-b border-border">
           {(
             [
-              { id: "invoices", label: "Invoices", icon: Receipt },
-              { id: "fees", label: "Fee Structures", icon: Wallet, staffOnly: true },
-              { id: "payments", label: "Payments", icon: CreditCard },
-            ] as const
+              { id: "invoices" as const, label: "Invoices", icon: Receipt, staffOnly: false },
+              { id: "fees" as const, label: "Fee Structures", icon: Wallet, staffOnly: true },
+              { id: "payments" as const, label: "Payments", icon: CreditCard, staffOnly: false },
+            ]
           )
             .filter((t) => !t.staffOnly || isStaff)
             .map((t) => (
