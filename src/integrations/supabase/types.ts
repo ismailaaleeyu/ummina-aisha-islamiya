@@ -122,6 +122,182 @@ export type Database = {
         }
         Relationships: []
       }
+      fee_structures: {
+        Row: {
+          amount: number
+          class_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          session: string | null
+          term: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          class_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          session?: string | null
+          term?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          class_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          session?: string | null
+          term?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_structures_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount: number
+          amount_paid: number
+          created_at: string
+          due_date: string | null
+          fee_structure_id: string | null
+          id: string
+          issued_by: string | null
+          notes: string | null
+          session: string | null
+          status: string
+          student_id: string
+          term: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          amount_paid?: number
+          created_at?: string
+          due_date?: string | null
+          fee_structure_id?: string | null
+          id?: string
+          issued_by?: string | null
+          notes?: string | null
+          session?: string | null
+          status?: string
+          student_id: string
+          term?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          amount_paid?: number
+          created_at?: string
+          due_date?: string | null
+          fee_structure_id?: string | null
+          id?: string
+          issued_by?: string | null
+          notes?: string | null
+          session?: string | null
+          status?: string
+          student_id?: string
+          term?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_fee_structure_id_fkey"
+            columns: ["fee_structure_id"]
+            isOneToOne: false
+            referencedRelation: "fee_structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          invoice_id: string
+          metadata: Json | null
+          paid_at: string | null
+          payer_email: string | null
+          provider: string
+          reference: string
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_id: string
+          metadata?: Json | null
+          paid_at?: string | null
+          payer_email?: string | null
+          provider?: string
+          reference: string
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_id?: string
+          metadata?: Json | null
+          paid_at?: string | null
+          payer_email?: string | null
+          provider?: string
+          reference?: string
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
