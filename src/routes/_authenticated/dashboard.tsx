@@ -59,7 +59,7 @@ function Dashboard() {
     { icon: Library, name: "Library", to: null, ready: false },
     { icon: Bus, name: "Transport", to: null, ready: false },
     { icon: MessagesSquare, name: "Communication", to: null, ready: false },
-    { icon: BarChart3, name: "Reports", to: null, ready: false },
+    { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
   ];
 
   return (
