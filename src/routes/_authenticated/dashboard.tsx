@@ -49,6 +49,7 @@ function Dashboard() {
   ];
 
   const modules = [
+    { icon: Users, name: "My Portal", to: "/portal" as const, ready: true },
     { icon: Users, name: "Students", to: "/students" as const, ready: true },
     { icon: BookOpen, name: "Classes", to: "/classes" as const, ready: true },
     { icon: GraduationCap, name: "Teachers", to: "/teachers" as const, ready: true },
