@@ -58,7 +58,7 @@ function Dashboard() {
     { icon: CalendarDays, name: "Timetable", to: "/timetable" as const, ready: true },
 
     { icon: Wallet, name: "Finance", to: "/finance" as const, ready: true },
-    { icon: Library, name: "Library", to: null, ready: false },
+    { icon: Library, name: "Library", to: "/library" as const, ready: true },
     { icon: Bus, name: "Transport", to: null, ready: false },
     { icon: MessagesSquare, name: "Communication", to: null, ready: false },
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
