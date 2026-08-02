@@ -65,6 +65,105 @@ export type Database = {
           },
         ]
       }
+      book_loans: {
+        Row: {
+          book_id: string
+          borrowed_at: string
+          created_at: string
+          due_date: string | null
+          id: string
+          issued_by: string | null
+          notes: string | null
+          returned_at: string | null
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          book_id: string
+          borrowed_at?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issued_by?: string | null
+          notes?: string | null
+          returned_at?: string | null
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          book_id?: string
+          borrowed_at?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          issued_by?: string | null
+          notes?: string | null
+          returned_at?: string | null
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_loans_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "book_loans_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      books: {
+        Row: {
+          author: string | null
+          available_copies: number
+          category: string | null
+          created_at: string
+          id: string
+          isbn: string | null
+          publisher: string | null
+          shelf_location: string | null
+          title: string
+          total_copies: number
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          available_copies?: number
+          category?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          publisher?: string | null
+          shelf_location?: string | null
+          title: string
+          total_copies?: number
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          available_copies?: number
+          category?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          publisher?: string | null
+          shelf_location?: string | null
+          title?: string
+          total_copies?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       branding: {
         Row: {
           accent_color: string
