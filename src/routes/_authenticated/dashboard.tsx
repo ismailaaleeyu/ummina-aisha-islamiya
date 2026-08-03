@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Users, GraduationCap, CalendarDays, Wallet, BookOpen,
   Library, Bus, MessagesSquare, BarChart3, LogOut, Settings,
+  Briefcase,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
