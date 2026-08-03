@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, ArrowLeft, Search, X } from "lucide-react";
+import { ExcelImport, excelDate } from "@/components/ExcelImport";
+
 
 export const Route = createFileRoute("/_authenticated/students")({
   head: () => ({ meta: [{ title: "Students | Ummina Aisha School" }] }),
