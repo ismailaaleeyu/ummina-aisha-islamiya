@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, ArrowLeft, Search, X } from "lucide-react";
+import { ExcelImport, excelDate } from "@/components/ExcelImport";
+
 
 export const Route = createFileRoute("/_authenticated/teachers")({
   head: () => ({ meta: [{ title: "Teachers | Ummina Aisha School" }] }),
@@ -126,12 +128,30 @@ function TeachersPage() {
           >
             <ArrowLeft className="h-4 w-4" /> Dashboard
           </Link>
-          <button
-            onClick={openNew}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" /> Add teacher
-          </button>
+          <div className="flex items-center gap-2">
+            <ExcelImport
+              table="teachers"
+              entityLabel="Teachers"
+              defaults={{ status: "active" }}
+              onDone={load}
+              fields={[
+                { key: "staff_no", label: "Staff No", aliases: ["staff no", "staff_no", "staffno", "staff number"], required: true },
+                { key: "full_name", label: "Full Name", aliases: ["full name", "name", "fullname"], required: true },
+                { key: "email", label: "Email", aliases: ["email", "e-mail"] },
+                { key: "phone", label: "Phone", aliases: ["phone", "phone number", "mobile"] },
+                { key: "specialization", label: "Specialization", aliases: ["specialization", "subject"] },
+                { key: "qualifications", label: "Qualifications", aliases: ["qualifications", "qualification"] },
+                { key: "hire_date", label: "Hire Date", aliases: ["hire date", "hired", "date hired"], parse: (v) => excelDate(v) },
+              ]}
+            />
+            <button
+              onClick={openNew}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" /> Add teacher
+            </button>
+          </div>
+
         </div>
       </header>
 

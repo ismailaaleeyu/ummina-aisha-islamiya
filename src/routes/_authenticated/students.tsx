@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, ArrowLeft, Search, X } from "lucide-react";
+import { ExcelImport, excelDate } from "@/components/ExcelImport";
+
 
 export const Route = createFileRoute("/_authenticated/students")({
   head: () => ({ meta: [{ title: "Students | Ummina Aisha School" }] }),
@@ -120,12 +122,31 @@ function StudentsPage() {
           <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Dashboard
           </Link>
-          <button
-            onClick={openNew}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-          >
-            <Plus className="h-4 w-4" /> New student
-          </button>
+          <div className="flex items-center gap-2">
+            <ExcelImport
+              table="students"
+              entityLabel="Students"
+              defaults={{ status: "active" }}
+              onDone={load}
+              fields={[
+                { key: "admission_no", label: "Admission No", aliases: ["admission no", "admission_no", "admissionno", "adm no"], required: true },
+                { key: "full_name", label: "Full Name", aliases: ["full name", "name", "fullname"], required: true },
+                { key: "gender", label: "Gender", aliases: ["gender", "sex"], parse: (v: string) => (v.toLowerCase().startsWith("f") ? "female" : v.toLowerCase().startsWith("m") ? "male" : null) },
+                { key: "date_of_birth", label: "Date of Birth", aliases: ["date of birth", "dob", "birth date"], parse: (v: string) => excelDate(v) },
+                { key: "class_id", label: "Class", aliases: ["class", "class name", "className"], parse: (v: string) => classes.find((c) => `${c.name}${c.section ? ` ${c.section}` : ""}`.toLowerCase() === v.toLowerCase() || c.name.toLowerCase() === v.toLowerCase())?.id ?? null },
+                { key: "guardian_name", label: "Guardian Name", aliases: ["guardian name", "guardian", "parent name"] },
+                { key: "guardian_phone", label: "Guardian Phone", aliases: ["guardian phone", "phone", "parent phone"] },
+                { key: "address", label: "Address", aliases: ["address"] },
+              ]}
+            />
+            <button
+              onClick={openNew}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              <Plus className="h-4 w-4" /> New student
+            </button>
+          </div>
+
         </div>
       </header>
 
