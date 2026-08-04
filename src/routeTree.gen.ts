@@ -18,6 +18,7 @@ import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated/notices'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedExamsRouteImport } from './routes/_authenticated/exams'
@@ -70,6 +71,11 @@ const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNoticesRoute = AuthenticatedNoticesRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
   id: '/library',
   path: '/library',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/exams': typeof AuthenticatedExamsRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/library': typeof AuthenticatedLibraryRoute
+  '/notices': typeof AuthenticatedNoticesRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/staff': typeof AuthenticatedStaffRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/exams': typeof AuthenticatedExamsRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/library': typeof AuthenticatedLibraryRoute
+  '/notices': typeof AuthenticatedNoticesRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/staff': typeof AuthenticatedStaffRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/_authenticated/exams': typeof AuthenticatedExamsRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
+  '/_authenticated/notices': typeof AuthenticatedNoticesRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/exams'
     | '/finance'
     | '/library'
+    | '/notices'
     | '/portal'
     | '/reports'
     | '/staff'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/exams'
     | '/finance'
     | '/library'
+    | '/notices'
     | '/portal'
     | '/reports'
     | '/staff'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/_authenticated/exams'
     | '/_authenticated/finance'
     | '/_authenticated/library'
+    | '/_authenticated/notices'
     | '/_authenticated/portal'
     | '/_authenticated/reports'
     | '/_authenticated/staff'
@@ -287,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notices': {
+      id: '/_authenticated/notices'
+      path: '/notices'
+      fullPath: '/notices'
+      preLoaderRoute: typeof AuthenticatedNoticesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/library': {
       id: '/_authenticated/library'
       path: '/library'
@@ -346,6 +365,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExamsRoute: typeof AuthenticatedExamsRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
+  AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
@@ -361,6 +381,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExamsRoute: AuthenticatedExamsRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
+  AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
@@ -381,13 +402,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
