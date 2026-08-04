@@ -489,6 +489,54 @@ export type Database = {
           },
         ]
       }
+      notices: {
+        Row: {
+          audience: Database["public"]["Enums"]["app_role"][]
+          body: string
+          category: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          pinned: boolean
+          priority: string
+          publish_at: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: Database["public"]["Enums"]["app_role"][]
+          body: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          pinned?: boolean
+          priority?: string
+          publish_at?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["app_role"][]
+          body?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          pinned?: boolean
+          priority?: string
+          publish_at?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
