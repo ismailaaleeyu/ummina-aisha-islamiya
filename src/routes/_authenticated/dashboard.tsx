@@ -142,10 +142,8 @@ function Dashboard() {
                 </>
               );
               const cls = "group flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-sm";
-              return m.to ? (
+              return (
                 <Link key={m.name} to={m.to} className={cls}>{inner}</Link>
-              ) : (
-                <button key={m.name} className={cls + " opacity-70 cursor-not-allowed"}>{inner}</button>
               );
             })}
           </div>
