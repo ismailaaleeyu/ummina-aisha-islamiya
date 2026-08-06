@@ -584,6 +584,8 @@ function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Paid at</th>
             <th className="px-4 py-3">Created</th>
+            <th className="px-4 py-3" />
+
           </tr>
         </thead>
         <tbody>
