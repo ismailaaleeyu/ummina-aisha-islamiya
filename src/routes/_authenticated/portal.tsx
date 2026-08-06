@@ -138,6 +138,27 @@ function PortalPage() {
     }
   }
 
+  // Confirm payment when the provider redirects back with ?reference=...
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const ref = url.searchParams.get("reference") || url.searchParams.get("trxref");
+    if (!ref) return;
+    (async () => {
+      try {
+        const res = await verifyPay({ data: { reference: ref } });
+        alert(res.status === "success" ? "Payment successful ✅" : "Payment not completed");
+      } catch (e) {
+        alert((e as Error).message);
+      } finally {
+        url.searchParams.delete("reference");
+        url.searchParams.delete("trxref");
+        window.history.replaceState({}, "", url.toString());
+        load();
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const classById = useMemo(() => {
     const m = new Map<string, ClassRow>();
     classes.forEach((c) => m.set(c.id, c));
