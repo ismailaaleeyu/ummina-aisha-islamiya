@@ -540,14 +540,39 @@ function InvoicesPanel({
 
 function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
   const [rows, setRows] = useState<Payment[]>([]);
-  useEffect(() => {
+  const [checking, setChecking] = useState<string | null>(null);
+  const verify = useServerFn(verifyPayment);
+
+  function load() {
     supabase
       .from("payments")
       .select("id,invoice_id,amount,status,reference,paid_at,created_at")
       .order("created_at", { ascending: false })
       .limit(100)
       .then(({ data }) => setRows((data ?? []) as Payment[]));
+  }
+
+  useEffect(() => {
+    load();
   }, []);
+
+  async function recheck(p: Payment) {
+    setChecking(p.id);
+    try {
+      const res = await verify({ data: { reference: p.reference } });
+      alert(
+        res.status === "success"
+          ? "Confirmed as paid ✅ — invoice updated."
+          : "Provider reports this payment was not completed.",
+      );
+    } catch (e) {
+      alert((e as Error).message);
+    } finally {
+      setChecking(null);
+      load();
+    }
+  }
+
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -559,12 +584,14 @@ function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Paid at</th>
             <th className="px-4 py-3">Created</th>
+            <th className="px-4 py-3" />
+
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 && (
             <tr>
-              <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+              <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                 {isStaff ? "No payments yet." : "No payments on your account yet."}
               </td>
             </tr>
@@ -591,6 +618,17 @@ function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
               </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {new Date(p.created_at).toLocaleString()}
+              </td>
+              <td className="px-4 py-3 text-right">
+                {p.status !== "success" && (
+                  <button
+                    onClick={() => recheck(p)}
+                    disabled={checking === p.id}
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary disabled:opacity-50"
+                  >
+                    {checking === p.id ? "Checking…" : "Re-check status"}
+                  </button>
+                )}
               </td>
             </tr>
           ))}

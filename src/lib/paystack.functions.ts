@@ -102,12 +102,14 @@ export const verifyPayment = createServerFn({ method: "POST" })
 
     const { data: payment } = await supabaseAdmin
       .from("payments")
-      .select("id, invoice_id, amount")
+      .select("id, invoice_id, amount, status")
       .eq("reference", data.reference)
       .maybeSingle();
     if (!payment) throw new Error("Payment record not found");
 
     const paidStatus = json.data.status === "success" ? "success" : "failed";
+    const alreadyApplied = payment.status === "success";
+
     await supabaseAdmin
       .from("payments")
       .update({
@@ -116,7 +118,7 @@ export const verifyPayment = createServerFn({ method: "POST" })
       })
       .eq("id", payment.id);
 
-    if (paidStatus === "success") {
+    if (paidStatus === "success" && !alreadyApplied) {
       const { data: inv } = await supabaseAdmin
         .from("invoices")
         .select("amount, amount_paid")
