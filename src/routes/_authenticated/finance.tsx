@@ -619,6 +619,17 @@ function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
               <td className="px-4 py-3 text-muted-foreground">
                 {new Date(p.created_at).toLocaleString()}
               </td>
+              <td className="px-4 py-3 text-right">
+                {p.status !== "success" && (
+                  <button
+                    onClick={() => recheck(p)}
+                    disabled={checking === p.id}
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary disabled:opacity-50"
+                  >
+                    {checking === p.id ? "Checking…" : "Re-check status"}
+                  </button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
