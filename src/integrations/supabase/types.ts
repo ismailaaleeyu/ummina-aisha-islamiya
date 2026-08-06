@@ -657,6 +657,44 @@ export type Database = {
         }
         Relationships: []
       }
+      route_stops: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          pickup_time: string | null
+          route_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          pickup_time?: string | null
+          route_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          pickup_time?: string | null
+          route_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_stops_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff: {
         Row: {
           created_at: string
@@ -704,6 +742,64 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      student_transport: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          route_id: string
+          start_date: string
+          status: string
+          stop_id: string | null
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          route_id: string
+          start_date?: string
+          status?: string
+          stop_id?: string | null
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          route_id?: string
+          start_date?: string
+          status?: string
+          stop_id?: string | null
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_transport_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_transport_stop_id_fkey"
+            columns: ["stop_id"]
+            isOneToOne: false
+            referencedRelation: "route_stops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_transport_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       students: {
         Row: {
@@ -909,6 +1005,47 @@ export type Database = {
           },
         ]
       }
+      transport_routes: {
+        Row: {
+          created_at: string
+          description: string | null
+          fare_per_term: number
+          id: string
+          name: string
+          status: string
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          fare_per_term?: number
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          fare_per_term?: number
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_routes_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -927,6 +1064,45 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          capacity: number
+          created_at: string
+          driver_name: string | null
+          driver_phone: string | null
+          id: string
+          model: string | null
+          notes: string | null
+          plate_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          driver_name?: string | null
+          driver_phone?: string | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          plate_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          driver_name?: string | null
+          driver_phone?: string | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          plate_number?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
