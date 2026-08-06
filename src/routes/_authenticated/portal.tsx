@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { initializePayment } from "@/lib/paystack.functions";
+import { initializePayment, verifyPayment } from "@/lib/paystack.functions";
 import {
   ArrowLeft, CalendarCheck2, Wallet, GraduationCap, User2, Loader2,
 } from "lucide-react";
@@ -51,6 +51,7 @@ function fmtNaira(n: number) {
 function PortalPage() {
   const navigate = useNavigate();
   const initPay = useServerFn(initializePayment);
+  const verifyPay = useServerFn(verifyPayment);
   const [loading, setLoading] = useState(true);
   const [payingId, setPayingId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
