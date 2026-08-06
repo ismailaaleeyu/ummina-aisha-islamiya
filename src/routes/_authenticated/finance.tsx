@@ -540,14 +540,39 @@ function InvoicesPanel({
 
 function PaymentsPanel({ isStaff }: { isStaff: boolean }) {
   const [rows, setRows] = useState<Payment[]>([]);
-  useEffect(() => {
+  const [checking, setChecking] = useState<string | null>(null);
+  const verify = useServerFn(verifyPayment);
+
+  function load() {
     supabase
       .from("payments")
       .select("id,invoice_id,amount,status,reference,paid_at,created_at")
       .order("created_at", { ascending: false })
       .limit(100)
       .then(({ data }) => setRows((data ?? []) as Payment[]));
+  }
+
+  useEffect(() => {
+    load();
   }, []);
+
+  async function recheck(p: Payment) {
+    setChecking(p.id);
+    try {
+      const res = await verify({ data: { reference: p.reference } });
+      alert(
+        res.status === "success"
+          ? "Confirmed as paid ✅ — invoice updated."
+          : "Provider reports this payment was not completed.",
+      );
+    } catch (e) {
+      alert((e as Error).message);
+    } finally {
+      setChecking(null);
+      load();
+    }
+  }
+
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
