@@ -61,7 +61,7 @@ function Dashboard() {
     { icon: Wallet, name: "Finance", to: "/finance" as const, ready: true },
     { icon: Library, name: "Library", to: "/library" as const, ready: true },
     { icon: Briefcase, name: "Staff / HR", to: "/staff" as const, ready: true },
-    { icon: Bus, name: "Transport", to: null, ready: false },
+    { icon: Bus, name: "Transport", to: "/transport" as const, ready: true },
     { icon: MessagesSquare, name: "Communication", to: "/notices" as const, ready: true },
 
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
