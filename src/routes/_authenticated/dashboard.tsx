@@ -65,6 +65,7 @@ function Dashboard() {
     { icon: MessagesSquare, name: "Communication", to: "/notices" as const, ready: true },
 
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
+    { icon: Settings, name: "Settings", to: "/settings" as const, ready: true },
   ];
 
   return (
