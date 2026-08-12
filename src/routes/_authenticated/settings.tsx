@@ -388,7 +388,7 @@ function UsersPanel() {
         .from("user_roles")
         .delete()
         .eq("user_id", userId)
-        .eq("role", role);
+        .eq("role", role as never);
     } else {
       await supabase
         .from("user_roles")
