@@ -392,7 +392,7 @@ function UsersPanel() {
     } else {
       await supabase
         .from("user_roles")
-        .insert({ user_id: userId, role });
+        .insert({ user_id: userId, role: role as never });
     }
     setBusy(null);
     load();
