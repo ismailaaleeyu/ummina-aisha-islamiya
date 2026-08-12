@@ -364,6 +364,18 @@ function UsersPanel() {
   const [rows, setRows] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null); // `${userId}:${role}`
+  const [showAdd, setShowAdd] = useState(false);
+  const createUser = useServerFn(adminCreateUser);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    fullName: "",
+    phone: "",
+    roles: ["student"] as string[],
+  });
+  const [creating, setCreating] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   function load() {
     setLoading(true);
@@ -398,7 +410,33 @@ function UsersPanel() {
     load();
   }
 
+  async function submitNewUser() {
+    setCreating(true);
+    setErr(null);
+    setMsg(null);
+    try {
+      await createUser({
+        data: {
+          email: form.email.trim(),
+          password: form.password,
+          fullName: form.fullName.trim(),
+          phone: form.phone.trim() || null,
+          roles: form.roles,
+        },
+      });
+      setMsg(`${form.email} created`);
+      setForm({ email: "", password: "", fullName: "", phone: "", roles: ["student"] });
+      setShowAdd(false);
+      load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed to create user");
+    } finally {
+      setCreating(false);
+    }
+  }
+
   if (loading) return <p className="text-sm text-muted-foreground">Loading users…</p>;
+
 
   return (
     <div className="space-y-4">
