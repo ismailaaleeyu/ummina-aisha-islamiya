@@ -65,6 +65,7 @@ function Dashboard() {
     { icon: MessagesSquare, name: "Communication", to: "/notices" as const, ready: true },
 
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
+    { icon: Settings, name: "Settings", to: "/settings" as const, ready: true },
   ];
 
   return (
@@ -124,9 +125,12 @@ function Dashboard() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Modules</h2>
-            <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              to="/settings"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            >
               <Settings className="h-4 w-4" /> Configure
-            </button>
+            </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {modules.map((m) => {
