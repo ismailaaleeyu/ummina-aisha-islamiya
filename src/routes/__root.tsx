@@ -122,6 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useBranding();
 
   return (
     <QueryClientProvider client={queryClient}>
