@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
+import { adminCreateUser } from "@/lib/admin-users.functions";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Settings as SettingsIcon,
@@ -440,12 +442,106 @@ function UsersPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Users & Roles</h2>
-        <p className="text-sm text-muted-foreground">
-          {rows.length} {rows.length === 1 ? "user" : "users"}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">
+            {rows.length} {rows.length === 1 ? "user" : "users"}
+          </p>
+          <button
+            onClick={() => setShowAdd((v) => !v)}
+            className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          >
+            {showAdd ? "Cancel" : "Add user"}
+          </button>
+        </div>
       </div>
+
+      {msg && <p className="text-sm text-primary">{msg}</p>}
+      {err && <p className="text-sm text-destructive">{err}</p>}
+
+      {showAdd && (
+        <div className="space-y-4 rounded-xl border border-border bg-card p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Email">
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+            <Field label="Temporary password (min 8 chars)">
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+            <Field label="Full name">
+              <input
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+            <Field label="Phone (optional)">
+              <input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Roles</label>
+            <div className="flex flex-wrap gap-1.5">
+              {ALL_ROLES.map((role) => {
+                const has = form.roles.includes(role);
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() =>
+                      setForm({
+                        ...form,
+                        roles: has
+                          ? form.roles.filter((r) => r !== role)
+                          : [...form.roles, role],
+                      })
+                    }
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium border transition ${
+                      has
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:text-foreground hover:bg-accent"
+                    }`}
+                  >
+                    {has && <Check className="h-3 w-3" />}
+                    {role.replace(/_/g, " ")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={submitNewUser}
+            disabled={
+              creating ||
+              !form.email ||
+              form.password.length < 8 ||
+              !form.fullName ||
+              form.roles.length === 0
+            }
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
+            <Upload className="h-4 w-4" />
+            {creating ? "Creating…" : "Create user"}
+          </button>
+        </div>
+      )}
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-secondary/50 text-left text-xs uppercase text-muted-foreground">
