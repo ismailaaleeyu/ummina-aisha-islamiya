@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      applicants: {
+        Row: {
+          address: string | null
+          application_date: string
+          application_no: string
+          created_at: string
+          created_by: string | null
+          date_of_birth: string | null
+          decision_notes: string | null
+          desired_class_id: string | null
+          full_name: string
+          gender: string | null
+          guardian_email: string | null
+          guardian_name: string | null
+          guardian_phone: string | null
+          id: string
+          notes: string | null
+          previous_school: string | null
+          status: string
+          student_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          application_date?: string
+          application_no: string
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          decision_notes?: string | null
+          desired_class_id?: string | null
+          full_name: string
+          gender?: string | null
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          id?: string
+          notes?: string | null
+          previous_school?: string | null
+          status?: string
+          student_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          application_date?: string
+          application_no?: string
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string | null
+          decision_notes?: string | null
+          desired_class_id?: string | null
+          full_name?: string
+          gender?: string | null
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          id?: string
+          notes?: string | null
+          previous_school?: string | null
+          status?: string
+          student_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applicants_desired_class_id_fkey"
+            columns: ["desired_class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applicants_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance: {
         Row: {
           class_id: string | null
