@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Users, GraduationCap, CalendarDays, Wallet, BookOpen,
   Library, Bus, MessagesSquare, BarChart3, LogOut, Settings,
-  Briefcase,
+  Briefcase, ClipboardList,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -63,6 +63,7 @@ function Dashboard() {
     { icon: Briefcase, name: "Staff / HR", to: "/staff" as const, ready: true },
     { icon: Bus, name: "Transport", to: "/transport" as const, ready: true },
     { icon: MessagesSquare, name: "Communication", to: "/notices" as const, ready: true },
+    { icon: ClipboardList, name: "Admissions", to: "/admissions" as const, ready: true },
 
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
     { icon: Settings, name: "Settings", to: "/settings" as const, ready: true },
