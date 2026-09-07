@@ -618,6 +618,44 @@ export type Database = {
         }
         Relationships: []
       }
+      parent_student_links: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean
+          parent_user_id: string
+          relationship: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          parent_user_id: string
+          relationship?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          parent_user_id?: string
+          relationship?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_student_links_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
