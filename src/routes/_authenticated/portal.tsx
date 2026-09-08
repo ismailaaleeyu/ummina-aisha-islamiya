@@ -34,6 +34,11 @@ type ExamScore = {
   exam: { name: string; term: string | null; academic_year: string | null } | null;
   subject: { name: string; code: string | null } | null;
 };
+type ParentLink = {
+  student_id: string;
+  relationship: string;
+  is_primary: boolean;
+};
 
 function grade(pct: number): string {
   if (pct >= 80) return "A";
@@ -55,6 +60,8 @@ function PortalPage() {
   const [loading, setLoading] = useState(true);
   const [payingId, setPayingId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [isParent, setIsParent] = useState(false);
+  const [parentLinks, setParentLinks] = useState<ParentLink[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
@@ -65,13 +72,32 @@ function PortalPage() {
     setLoading(true);
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setEmail(user.email ?? "");
 
-    const { data: myStudents } = await supabase
+    const [{ data: roleRows }, { data: linkRows }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", user.id),
+      supabase
+        .from("parent_student_links")
+        .select("student_id, relationship, is_primary")
+        .eq("parent_user_id", user.id),
+    ]);
+    const parent = (roleRows ?? []).some((row) => row.role === "parent");
+    const links = (linkRows ?? []) as ParentLink[];
+    setIsParent(parent);
+    setParentLinks(links);
+
+    const studentQuery = supabase
       .from("students")
-      .select("id, admission_no, full_name, gender, class_id, guardian_name, guardian_phone")
-      .eq("user_id", user.id);
+      .select("id, admission_no, full_name, gender, class_id, guardian_name, guardian_phone");
+    const { data: myStudents } = parent
+      ? links.length > 0
+        ? await studentQuery.in("id", links.map((link) => link.student_id))
+        : { data: [] as Student[] }
+      : await studentQuery.eq("user_id", user.id);
 
     const list = (myStudents ?? []) as Student[];
     setStudents(list);
@@ -177,9 +203,9 @@ function PortalPage() {
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
-            <div>
-              <h1 className="text-lg font-semibold">My Portal</h1>
-              <p className="text-xs text-muted-foreground">Attendance, results & fees</p>
+             <div>
+               <h1 className="text-lg font-semibold">{isParent ? "Parent Portal" : "My Portal"}</h1>
+               <p className="text-xs text-muted-foreground">Attendance, results & fees</p>
             </div>
           </div>
         </div>
@@ -193,9 +219,11 @@ function PortalPage() {
         ) : students.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-secondary/40 p-8 text-center">
             <User2 className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
-            <p className="font-medium">No student record is linked to your account yet.</p>
+            <p className="font-medium">
+              {isParent ? "No children are linked to your account yet." : "No student record is linked to your account yet."}
+            </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Please contact the school office to link your admission record to <span className="font-medium">{email}</span>.
+              Please contact the school office to {isParent ? "link your children to" : "link your admission record to"} <span className="font-medium">{email}</span>.
             </p>
             <Link to="/dashboard" className="inline-block mt-4 text-sm text-primary underline">
               Return to dashboard
@@ -211,7 +239,9 @@ function PortalPage() {
                   <div key={s.id} className="rounded-xl border border-border bg-card p-5">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Student</p>
+                         <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                           {isParent ? (parentLinks.find((link) => link.student_id === s.id)?.relationship ?? "Child") : "Student"}
+                         </p>
                         <p className="text-lg font-semibold mt-1">{s.full_name}</p>
                         <p className="text-sm text-muted-foreground">
                           {s.admission_no ? `Adm. ${s.admission_no}` : "No admission no."}
