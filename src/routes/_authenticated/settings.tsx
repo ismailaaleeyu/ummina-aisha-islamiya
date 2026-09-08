@@ -12,6 +12,8 @@ import {
   Check,
   Save,
   Upload,
+  Link2,
+  Trash2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -362,6 +364,20 @@ type UserRow = {
   roles: { role: string }[];
 };
 
+type StudentOption = {
+  id: string;
+  full_name: string;
+  admission_no: string | null;
+};
+
+type ParentLink = {
+  id: string;
+  parent_user_id: string;
+  student_id: string;
+  relationship: string;
+  is_primary: boolean;
+};
+
 function UsersPanel() {
   const [rows, setRows] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -378,6 +394,17 @@ function UsersPanel() {
   const [creating, setCreating] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [students, setStudents] = useState<StudentOption[]>([]);
+  const [parentLinks, setParentLinks] = useState<ParentLink[]>([]);
+  const [linkForm, setLinkForm] = useState({
+    parentUserId: "",
+    studentId: "",
+    relationship: "Parent",
+    isPrimary: false,
+  });
+  const [linkBusy, setLinkBusy] = useState(false);
+  const [linkMsg, setLinkMsg] = useState<string | null>(null);
+  const [linkErr, setLinkErr] = useState<string | null>(null);
 
   function load() {
     setLoading(true);
@@ -391,9 +418,53 @@ function UsersPanel() {
       });
   }
 
+  async function loadParentLinks() {
+    const [{ data: studentRows }, { data: linkRows }] = await Promise.all([
+      supabase.from("students").select("id, full_name, admission_no").order("full_name"),
+      supabase
+        .from("parent_student_links")
+        .select("id, parent_user_id, student_id, relationship, is_primary")
+        .order("created_at", { ascending: false }),
+    ]);
+    setStudents((studentRows ?? []) as StudentOption[]);
+    setParentLinks((linkRows ?? []) as ParentLink[]);
+  }
+
   useEffect(() => {
     load();
+    loadParentLinks();
   }, []);
+
+  async function addParentLink() {
+    if (!linkForm.parentUserId || !linkForm.studentId) return;
+    setLinkBusy(true);
+    setLinkMsg(null);
+    setLinkErr(null);
+    const { error } = await supabase.from("parent_student_links").insert({
+      parent_user_id: linkForm.parentUserId,
+      student_id: linkForm.studentId,
+      relationship: linkForm.relationship.trim() || "Parent",
+      is_primary: linkForm.isPrimary,
+    });
+    if (error) {
+      setLinkErr(error.code === "23505" ? "This parent is already linked to that student." : error.message);
+    } else {
+      setLinkMsg("Parent link saved.");
+      setLinkForm({ parentUserId: "", studentId: "", relationship: "Parent", isPrimary: false });
+      loadParentLinks();
+    }
+    setLinkBusy(false);
+  }
+
+  async function removeParentLink(id: string) {
+    if (!window.confirm("Remove this parent–student link?")) return;
+    setLinkBusy(true);
+    const { error } = await supabase.from("parent_student_links").delete().eq("id", id);
+    if (error) setLinkErr(error.message);
+    else setLinkMsg("Parent link removed.");
+    await loadParentLinks();
+    setLinkBusy(false);
+  }
 
   async function toggleRole(userId: string, role: string, has: boolean) {
     setBusy(`${userId}:${role}`);
@@ -588,6 +659,102 @@ function UsersPanel() {
       <p className="text-xs text-muted-foreground">
         Click a role chip to grant or revoke it. Changes apply instantly.
       </p>
+
+      <section className="space-y-4 rounded-xl border border-border bg-card p-6">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-semibold">Parent–student links</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Connect parent accounts to the exact student records they may view.
+            </p>
+          </div>
+          <Link2 className="h-5 w-5 text-primary" />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_160px_auto] lg:items-end">
+          <Field label="Parent account">
+            <select
+              value={linkForm.parentUserId}
+              onChange={(e) => setLinkForm({ ...linkForm, parentUserId: e.target.value })}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">Select parent</option>
+              {rows.filter((u) => u.roles?.some((r) => r.role === "parent")).map((u) => (
+                <option key={u.id} value={u.id}>{u.full_name ?? "Unnamed parent"}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Student">
+            <select
+              value={linkForm.studentId}
+              onChange={(e) => setLinkForm({ ...linkForm, studentId: e.target.value })}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">Select student</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>{s.full_name}{s.admission_no ? ` · ${s.admission_no}` : ""}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Relationship">
+            <input
+              value={linkForm.relationship}
+              onChange={(e) => setLinkForm({ ...linkForm, relationship: e.target.value })}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </Field>
+          <button
+            onClick={addParentLink}
+            disabled={linkBusy || !linkForm.parentUserId || !linkForm.studentId}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
+            <Link2 className="h-4 w-4" /> Add link
+          </button>
+        </div>
+
+        {linkMsg && <p className="text-sm text-primary">{linkMsg}</p>}
+        {linkErr && <p className="text-sm text-destructive">{linkErr}</p>}
+
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead className="bg-secondary/50 text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3 font-medium">Parent</th>
+                <th className="px-4 py-3 font-medium">Student</th>
+                <th className="px-4 py-3 font-medium">Relationship</th>
+                <th className="px-4 py-3 font-medium">Primary</th>
+                <th className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {parentLinks.length === 0 ? (
+                <tr><td colSpan={5} className="px-4 py-5 text-center text-muted-foreground">No parent links yet.</td></tr>
+              ) : parentLinks.map((link) => {
+                const parent = rows.find((u) => u.id === link.parent_user_id);
+                const student = students.find((s) => s.id === link.student_id);
+                return (
+                  <tr key={link.id}>
+                    <td className="px-4 py-3">{parent?.full_name ?? "Unknown parent"}</td>
+                    <td className="px-4 py-3">{student?.full_name ?? "Unknown student"}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{link.relationship}</td>
+                    <td className="px-4 py-3">{link.is_primary ? "Yes" : "No"}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => removeParentLink(link.id)}
+                        disabled={linkBusy}
+                        aria-label={`Remove link for ${student?.full_name ?? "student"}`}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Remove
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }
