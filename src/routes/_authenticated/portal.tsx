@@ -143,7 +143,7 @@ function PortalPage() {
   }, [attendance]);
 
   const outstanding = useMemo(
-    () => invoices.reduce((sum, i) => sum + Math.max(0, Number(i.amount) - Number(i.amount_paid)), 0),
+    () => invoices.filter((i) => i.status !== "cancelled").reduce((sum, i) => sum + Math.max(0, Number(i.amount) - Number(i.amount_paid)), 0),
     [invoices],
   );
 
@@ -265,7 +265,7 @@ function PortalPage() {
             {/* Quick stats */}
             <section className="grid gap-4 sm:grid-cols-3">
               <StatCard icon={CalendarCheck2} label="Attendance rate (last 60)" value={`${attStats.rate}%`} sub={`${attStats.present}/${attStats.total} present`} />
-              <StatCard icon={Wallet} label="Outstanding fees" value={fmtNaira(outstanding)} sub={`${invoices.filter(i => i.status !== "paid").length} open`} />
+              <StatCard icon={Wallet} label="Outstanding fees" value={fmtNaira(outstanding)} sub={`${invoices.filter(i => i.status !== "paid" && i.status !== "cancelled").length} open`} />
               <StatCard icon={GraduationCap} label="Recorded scores" value={String(scores.length)} sub="most recent 50" />
             </section>
 
