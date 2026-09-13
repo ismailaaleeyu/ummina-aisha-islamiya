@@ -304,7 +304,7 @@ function PortalPage() {
                             }>{i.status}</span>
                           </td>
                           <td className="px-4 py-2 text-right">
-                            {i.status !== "paid" && bal > 0 ? (
+                            {i.status !== "paid" && i.status !== "cancelled" && bal > 0 ? (
                               <button
                                 onClick={() => pay(i)}
                                 disabled={payingId === i.id}
