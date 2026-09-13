@@ -1,3 +1,3 @@
 - [x] Finish parent portal child linking and parent data view
 - [x] Verify the parent experience implementation and typecheck
-- [ ] Live-test with a signed-in parent account (requires an account with a parent role and linked child)
+- [x] Live-test with a signed-in parent account (linked children, attendance, results, invoices all render; no page errors)
