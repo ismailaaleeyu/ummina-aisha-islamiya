@@ -95,6 +95,130 @@ export type Database = {
           },
         ]
       }
+      assignment_submissions: {
+        Row: {
+          assignment_id: string
+          content: string | null
+          created_at: string
+          feedback: string | null
+          graded_by: string | null
+          id: string
+          score: number | null
+          status: string
+          student_id: string
+          submitted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          assignment_id: string
+          content?: string | null
+          created_at?: string
+          feedback?: string | null
+          graded_by?: string | null
+          id?: string
+          score?: number | null
+          status?: string
+          student_id: string
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assignment_id?: string
+          content?: string | null
+          created_at?: string
+          feedback?: string | null
+          graded_by?: string | null
+          id?: string
+          score?: number | null
+          status?: string
+          student_id?: string
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_submissions_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_submissions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assignments: {
+        Row: {
+          assigned_date: string
+          class_id: string
+          created_at: string
+          created_by: string | null
+          due_date: string | null
+          id: string
+          instructions: string | null
+          max_score: number
+          subject_id: string | null
+          teacher_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_date?: string
+          class_id: string
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          instructions?: string | null
+          max_score?: number
+          subject_id?: string | null
+          teacher_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_date?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string | null
+          due_date?: string | null
+          id?: string
+          instructions?: string | null
+          max_score?: number
+          subject_id?: string | null
+          teacher_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance: {
         Row: {
           class_id: string | null

@@ -22,6 +22,7 @@ import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated/notices'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
+import { Route as AuthenticatedHomeworkRouteImport } from './routes/_authenticated/homework'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedExamsRouteImport } from './routes/_authenticated/exams'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -94,6 +95,11 @@ const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
   path: '/library',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHomeworkRoute = AuthenticatedHomeworkRouteImport.update({
+  id: '/homework',
+  path: '/homework',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
   '/finance': typeof AuthenticatedFinanceRoute
+  '/homework': typeof AuthenticatedHomeworkRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
   '/portal': typeof AuthenticatedPortalRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
   '/finance': typeof AuthenticatedFinanceRoute
+  '/homework': typeof AuthenticatedHomeworkRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
   '/portal': typeof AuthenticatedPortalRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exams': typeof AuthenticatedExamsRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
+  '/_authenticated/homework': typeof AuthenticatedHomeworkRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/notices': typeof AuthenticatedNoticesRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/finance'
+    | '/homework'
     | '/library'
     | '/notices'
     | '/portal'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exams'
     | '/finance'
+    | '/homework'
     | '/library'
     | '/notices'
     | '/portal'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/exams'
     | '/_authenticated/finance'
+    | '/_authenticated/homework'
     | '/_authenticated/library'
     | '/_authenticated/notices'
     | '/_authenticated/portal'
@@ -363,6 +375,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLibraryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/homework': {
+      id: '/_authenticated/homework'
+      path: '/homework'
+      fullPath: '/homework'
+      preLoaderRoute: typeof AuthenticatedHomeworkRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/finance': {
       id: '/_authenticated/finance'
       path: '/finance'
@@ -422,6 +441,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExamsRoute: typeof AuthenticatedExamsRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
+  AuthenticatedHomeworkRoute: typeof AuthenticatedHomeworkRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
@@ -441,6 +461,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExamsRoute: AuthenticatedExamsRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
+  AuthenticatedHomeworkRoute: AuthenticatedHomeworkRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
