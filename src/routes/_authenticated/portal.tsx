@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { initializePayment, verifyPayment } from "@/lib/paystack.functions";
 import {
-  ArrowLeft, CalendarCheck2, Wallet, GraduationCap, User2, Loader2,
+  ArrowLeft, CalendarCheck2, Wallet, GraduationCap, User2, Loader2, NotebookPen,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/portal")({
@@ -33,6 +33,25 @@ type ExamScore = {
   id: string; score: number; max_score: number; remarks: string | null;
   exam: { name: string; term: string | null; academic_year: string | null } | null;
   subject: { name: string; code: string | null } | null;
+};
+type SubjectRow = { id: string; name: string; code: string | null };
+type HomeworkAssignment = {
+  id: string;
+  title: string;
+  instructions: string | null;
+  subject_id: string | null;
+  class_id: string;
+  assigned_date: string;
+  due_date: string | null;
+  max_score: number;
+};
+type HomeworkSubmission = {
+  assignment_id: string;
+  student_id: string;
+  status: string;
+  score: number | null;
+  feedback: string | null;
+  submitted_at: string | null;
 };
 type ParentLink = {
   student_id: string;
@@ -67,6 +86,9 @@ function PortalPage() {
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [scores, setScores] = useState<ExamScore[]>([]);
+  const [subjects, setSubjects] = useState<SubjectRow[]>([]);
+  const [homework, setHomework] = useState<HomeworkAssignment[]>([]);
+  const [homeworkSubmissions, setHomeworkSubmissions] = useState<HomeworkSubmission[]>([]);
 
   async function load() {
     setLoading(true);
@@ -103,14 +125,14 @@ function PortalPage() {
     setStudents(list);
 
     if (list.length === 0) {
-      setAttendance([]); setInvoices([]); setScores([]); setClasses([]);
+      setAttendance([]); setInvoices([]); setScores([]); setClasses([]); setSubjects([]); setHomework([]); setHomeworkSubmissions([]);
       setLoading(false);
       return;
     }
     const ids = list.map((s) => s.id);
     const classIds = list.map((s) => s.class_id).filter(Boolean) as string[];
 
-    const [cls, att, inv, sc] = await Promise.all([
+    const [cls, att, inv, sc, hw, hwSubs] = await Promise.all([
       classIds.length
         ? supabase.from("classes").select("id, name, level, section").in("id", classIds)
         : Promise.resolve({ data: [] as ClassRow[] }),
@@ -122,11 +144,30 @@ function PortalPage() {
         .in("student_id", ids)
         .order("created_at", { ascending: false })
         .limit(50),
+      supabase
+        .from("assignments")
+        .select("id, title, instructions, subject_id, class_id, assigned_date, due_date, max_score")
+        .in("class_id", classIds)
+        .order("due_date", { ascending: true, nullsFirst: false }),
+      supabase
+        .from("assignment_submissions")
+        .select("assignment_id, student_id, status, score, feedback, submitted_at")
+        .in("student_id", ids),
     ]);
     setClasses((cls.data ?? []) as ClassRow[]);
     setAttendance((att.data ?? []) as AttendanceRow[]);
     setInvoices((inv.data ?? []) as Invoice[]);
     setScores(((sc as { data: unknown }).data ?? []) as ExamScore[]);
+    const assignments = (hw.data ?? []) as HomeworkAssignment[];
+    setHomework(assignments);
+    setHomeworkSubmissions((hwSubs.data ?? []) as HomeworkSubmission[]);
+    const subjectIds = assignments.map((a) => a.subject_id).filter(Boolean) as string[];
+    if (subjectIds.length) {
+      const { data: subjectRows } = await supabase.from("subjects").select("id, name, code").in("id", subjectIds);
+      setSubjects((subjectRows ?? []) as SubjectRow[]);
+    } else {
+      setSubjects([]);
+    }
     setLoading(false);
   }
 
@@ -191,6 +232,22 @@ function PortalPage() {
     classes.forEach((c) => m.set(c.id, c));
     return m;
   }, [classes]);
+
+  const subjectById = useMemo(() => {
+    const m = new Map<string, SubjectRow>();
+    subjects.forEach((subject) => m.set(subject.id, subject));
+    return m;
+  }, [subjects]);
+
+  const submissionsByAssignment = useMemo(() => {
+    const m = new Map<string, HomeworkSubmission[]>();
+    homeworkSubmissions.forEach((submission) => {
+      const current = m.get(submission.assignment_id) ?? [];
+      current.push(submission);
+      m.set(submission.assignment_id, current);
+    });
+    return m;
+  }, [homeworkSubmissions]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -361,6 +418,63 @@ function PortalPage() {
                     })}
                   </tbody>
                 </table>
+              </div>
+            </section>
+
+            {/* Homework */}
+            <section>
+              <div className="mb-3 flex items-center gap-2">
+                <NotebookPen className="h-4 w-4 text-primary" />
+                <h2 className="text-base font-semibold">Homework</h2>
+              </div>
+              <div className="space-y-3">
+                {homework.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border bg-secondary/40 px-4 py-6 text-center text-sm text-muted-foreground">
+                    No homework has been posted for your class yet.
+                  </div>
+                ) : homework.map((assignment) => {
+                  const className = classById.get(assignment.class_id);
+                  const subject = assignment.subject_id ? subjectById.get(assignment.subject_id) : undefined;
+                  const submissions = submissionsByAssignment.get(assignment.id) ?? [];
+                  const isDue = assignment.due_date && assignment.due_date < new Date().toISOString().slice(0, 10);
+                  return (
+                    <div key={assignment.id} className="rounded-xl border border-border bg-card p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <p className="font-medium">{assignment.title}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {[subject?.name, className ? `${className.name}${className.section ? ` ${className.section}` : ""}` : null].filter(Boolean).join(" · ") || "Class assignment"}
+                          </p>
+                        </div>
+                        <div className={`text-xs font-medium ${isDue ? "text-destructive" : "text-muted-foreground"}`}>
+                          {assignment.due_date ? `Due ${assignment.due_date}` : "No due date"}
+                        </div>
+                      </div>
+                      {assignment.instructions && <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{assignment.instructions}</p>}
+                      <div className="mt-4 space-y-2">
+                        {students.map((student) => {
+                          const submission = submissions.find((item) => item.student_id === student.id);
+                          const status = submission?.status ?? "pending";
+                          return (
+                            <div key={student.id} className="flex flex-col gap-2 rounded-lg bg-muted/40 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                              <span className="font-medium">{isParent ? student.full_name : "My submission"}</span>
+                              <span className="text-muted-foreground">
+                                {status === "graded" && submission?.score != null
+                                  ? `Graded: ${submission.score}/${assignment.max_score}`
+                                  : status === "submitted"
+                                    ? "Submitted"
+                                    : status === "late"
+                                      ? "Submitted late"
+                                      : "Not submitted"}
+                                {submission?.feedback ? ` · ${submission.feedback}` : ""}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
