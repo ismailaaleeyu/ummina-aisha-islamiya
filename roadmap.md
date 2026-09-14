@@ -1,3 +1,5 @@
 - [x] Finish parent portal child linking and parent data view
 - [x] Verify the parent experience implementation and typecheck
 - [x] Live-test with a signed-in parent account (linked children, attendance, results, invoices all render; no page errors)
+- [ ] Finish homework visibility in the student and parent portal
+- [ ] Typecheck and live-test homework and portal views
