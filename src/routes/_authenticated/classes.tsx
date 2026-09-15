@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, ArrowLeft, X } from "lucide-react";
+import { AdminAccessDenied } from "@/components/AdminAccessDenied";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 
 export const Route = createFileRoute("/_authenticated/classes")({
   head: () => ({ meta: [{ title: "Classes | Ummina Aisha School" }] }),
@@ -18,6 +20,7 @@ type ClassRow = {
 const empty = { name: "", level: "", section: "" };
 
 function ClassesPage() {
+  const { isAdmin, loading: accessLoading } = useAdminAccess();
   const [rows, setRows] = useState<ClassRow[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -39,7 +42,13 @@ function ClassesPage() {
     setCounts(map);
     setLoading(false);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    if (!accessLoading && isAdmin) void load();
+  }, [accessLoading, isAdmin]);
+
+  if (accessLoading || !isAdmin) {
+    return <AdminAccessDenied loading={accessLoading} />;
+  }
 
   function openNew() { setEditing(null); setForm(empty); setErr(null); setOpen(true); }
   function openEdit(c: ClassRow) {

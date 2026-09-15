@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 import {
   Users, GraduationCap, CalendarDays, Wallet, BookOpen,
   Library, Bus, MessagesSquare, BarChart3, LogOut, Settings,
@@ -19,6 +20,7 @@ type RoleRow = { role: string };
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { isAdmin, loading: accessLoading } = useAdminAccess();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [email, setEmail] = useState<string>("");
@@ -69,6 +71,9 @@ function Dashboard() {
     { icon: BarChart3, name: "Reports", to: "/reports" as const, ready: true },
     { icon: Settings, name: "Settings", to: "/settings" as const, ready: true },
   ];
+  const visibleModules = modules.filter(
+    (module) => !["Students", "Classes", "Teachers"].includes(module.name) || (isAdmin && !accessLoading),
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -135,7 +140,7 @@ function Dashboard() {
             </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {modules.map((m) => {
+            {visibleModules.map((m) => {
               const inner = (
                 <>
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground group-hover:bg-primary group-hover:text-primary-foreground transition">

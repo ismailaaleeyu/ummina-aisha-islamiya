@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, ArrowLeft, Search, X } from "lucide-react";
 import { ExcelImport, excelDate } from "@/components/ExcelImport";
+import { AdminAccessDenied } from "@/components/AdminAccessDenied";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 
 
 export const Route = createFileRoute("/_authenticated/teachers")({
@@ -36,6 +38,7 @@ const empty: Omit<Teacher, "id"> = {
 };
 
 function TeachersPage() {
+  const { isAdmin, loading: accessLoading } = useAdminAccess();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -56,8 +59,12 @@ function TeachersPage() {
   }
 
   useEffect(() => {
-    load();
-  }, []);
+    if (!accessLoading && isAdmin) void load();
+  }, [accessLoading, isAdmin]);
+
+  if (accessLoading || !isAdmin) {
+    return <AdminAccessDenied loading={accessLoading} />;
+  }
 
   function openNew() {
     setEditing(null);
