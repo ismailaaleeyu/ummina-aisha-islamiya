@@ -3,3 +3,4 @@
 - [x] Live-test with a signed-in parent account (linked children, attendance, results, invoices all render; no page errors)
 - [x] Finish homework visibility in the student and parent portal
 - [x] Typecheck and live-test homework and portal views
+- [x] Restrict student, teacher, and class management to administrators
