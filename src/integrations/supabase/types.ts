@@ -938,6 +938,54 @@ export type Database = {
           },
         ]
       }
+      school_events: {
+        Row: {
+          all_day: boolean
+          audience: Database["public"]["Enums"]["app_role"][]
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_at: string | null
+          id: string
+          location: string | null
+          published: boolean
+          start_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean
+          audience?: Database["public"]["Enums"]["app_role"][]
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          location?: string | null
+          published?: boolean
+          start_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean
+          audience?: Database["public"]["Enums"]["app_role"][]
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          location?: string | null
+          published?: boolean
+          start_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       staff: {
         Row: {
           created_at: string
