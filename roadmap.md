@@ -4,3 +4,6 @@
 - [x] Finish homework visibility in the student and parent portal
 - [x] Typecheck and live-test homework and portal views
 - [x] Restrict student, teacher, and class management to administrators
+- [ ] Build an Events & Calendar page using the existing school events table and role-based access
+- [ ] Add the Events module to the dashboard
+- [ ] Validate Events & Calendar with a typecheck and preview checks
