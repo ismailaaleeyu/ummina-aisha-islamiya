@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep authenticated school modules as file-based routes and use the browser client with existing row-level policies for user-scoped reads and writes, so the shared auth gate and database permissions remain authoritative.
