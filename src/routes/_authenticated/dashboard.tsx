@@ -59,6 +59,7 @@ function Dashboard() {
     { icon: CalendarDays, name: "Attendance", to: "/attendance" as const, ready: true },
     { icon: BookOpen, name: "Exams", to: "/exams" as const, ready: true },
     { icon: CalendarDays, name: "Timetable", to: "/timetable" as const, ready: true },
+    { icon: CalendarDays, name: "Events & Calendar", to: "/events" as const, ready: true },
 
     { icon: Wallet, name: "Finance", to: "/finance" as const, ready: true },
     { icon: Library, name: "Library", to: "/library" as const, ready: true },
